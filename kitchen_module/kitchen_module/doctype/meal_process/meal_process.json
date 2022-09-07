@@ -1,13 +1,15 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:MP-{#####}",
+ "autoname": "naming_series:",
  "creation": "2022-08-15 10:47:00.701592",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "naming_series",
   "get_items_from",
+  "item_group",
   "sales_order",
   "material_request",
   "from_date",
@@ -16,6 +18,12 @@
   "posting_date",
   "source_warehouse",
   "target_warehouse",
+  "select_items_section",
+  "item",
+  "column_break_13",
+  "quantity",
+  "column_break_15",
+  "add",
   "section_break_11",
   "get_sales_orders",
   "sales_orders",
@@ -24,15 +32,21 @@
   "material_requests",
   "section_break_1",
   "get_items",
+  "get_rates",
   "main_items",
   "section_break_2",
+  "get_bom",
   "bom_list",
   "section_break_4",
   "recipe_items",
+  "section_break_24",
+  "stock_entry",
+  "cancel_stock_entry",
   "amended_from"
  ],
  "fields": [
   {
+   "allow_bulk_edit": 1,
    "fieldname": "main_items",
    "fieldtype": "Table",
    "label": "Main Items",
@@ -64,7 +78,7 @@
   {
    "fieldname": "recipe_items",
    "fieldtype": "Table",
-   "label": "Recipe Items",
+   "label": "Components",
    "options": "MP Recipe Items"
   },
   {
@@ -94,7 +108,7 @@
    "fieldname": "get_items_from",
    "fieldtype": "Select",
    "label": "Get Items From",
-   "options": "\nSales Order\nMaterial Request"
+   "options": "\nBulk Upload\nItem Group\nSales Order\nMaterial Request"
   },
   {
    "depends_on": "eval: doc.get_items_from == \"Material Request\"",
@@ -105,16 +119,19 @@
    "options": "Material Request"
   },
   {
+   "depends_on": "eval: doc.get_items_from == \"Sales Order\" || doc.get_items_from == \"Material Request\"",
    "fieldname": "get_items",
    "fieldtype": "Button",
    "label": "Get Items"
   },
   {
+   "depends_on": "eval: doc.get_items_from == \"Sales Order\" || doc.get_items_from == \"Material Request\" ",
    "fieldname": "from_date",
    "fieldtype": "Date",
    "label": "From Date"
   },
   {
+   "depends_on": "eval: doc.get_items_from == \"Sales Order\" || doc.get_items_from == \"Material Request\" ",
    "fieldname": "to_date",
    "fieldtype": "Date",
    "label": "To Date"
@@ -168,12 +185,91 @@
    "fieldtype": "Table",
    "label": "Material Requests",
    "options": "Production Plan Material Request"
+  },
+  {
+   "depends_on": "eval: doc.get_items_from == \"Item Group\"",
+   "fieldname": "item_group",
+   "fieldtype": "Link",
+   "label": "Item Group",
+   "options": "Item Group"
+  },
+  {
+   "fieldname": "section_break_24",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Link",
+   "label": "Stock Entry",
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cancel_stock_entry",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Cancel Stock Entry",
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "depends_on": "eval: doc.get_items_from == \"Item Group\"",
+   "fieldname": "select_items_section",
+   "fieldtype": "Section Break",
+   "label": "Select Items"
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "label": "Quantity"
+  },
+  {
+   "fieldname": "column_break_15",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "add",
+   "fieldtype": "Button",
+   "label": "Add"
+  },
+  {
+   "depends_on": "eval: doc.get_items_from == \"Bulk Upload\"",
+   "fieldname": "get_rates",
+   "fieldtype": "Button",
+   "label": "Get Rates"
+  },
+  {
+   "depends_on": "eval: doc.get_items_from == \"Bulk Upload\" || doc.get_items_from == \"Item Group\"",
+   "fieldname": "get_bom",
+   "fieldtype": "Button",
+   "label": "Get BOMs/Raw Materials"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "MP-.YY.-"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
- "links": [],
- "modified": "2022-08-20 12:51:19.963382",
+ "links": [
+  {
+   "link_doctype": "Stock Entry",
+   "link_fieldname": "meal_process"
+  }
+ ],
+ "modified": "2022-09-04 22:21:42.349082",
  "modified_by": "Administrator",
  "module": "Kitchen Module",
  "name": "Meal Process",
