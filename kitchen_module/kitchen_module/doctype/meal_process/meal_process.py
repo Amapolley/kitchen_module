@@ -67,8 +67,9 @@ class MealProcess(Document):
 			se_item = frappe.new_doc("Stock Entry Detail")
 			se_item.t_warehouse = self.target_warehouse
 			se_item.item_code = i.item_code
+			se_item.is_finished_item = 1
 			se_item.qty = i.qty
-			se_item.basic_rate = i.cost
+			se_item.basic_rate = i.cost/i.qty
 			se.append("items", se_item)
 
 		se.save()
