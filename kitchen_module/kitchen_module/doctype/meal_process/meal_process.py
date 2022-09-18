@@ -17,7 +17,8 @@ class MealProcess(Document):
 								j.amount = j.qty * j.rate
 								cost = cost + j.amount
 						else:
-							cost = cost + j.amount	
+							if j.amount:
+								cost = cost + j.amount	
 				i.cost = cost
 				i.profit = i.amount - i.cost
 		elif self.get_items_from == "Material Request":
@@ -31,7 +32,8 @@ class MealProcess(Document):
 								j.amount = j.qty * j.rate
 								cost = cost + j.amount
 						else:
-							cost = cost + j.amount	
+							if j.amount:
+								cost = cost + j.amount	
 				i.cost = cost
 				i.profit = i.amount - i.cost
 		else:
@@ -45,7 +47,8 @@ class MealProcess(Document):
 								j.amount = j.qty * j.rate
 								cost = cost + j.amount
 						else:
-							cost = cost + j.amount	
+							if j.amount:
+								cost = cost + j.amount	
 				i.cost = cost
 				i.profit = i.amount - i.cost
 
@@ -56,6 +59,8 @@ class MealProcess(Document):
 				se.stock_entry_type = "Manufacture"
 				se.meal_process = self.name
 				se.from_bom = 1
+				se.from_warehouse = self.source_warehouse
+				se.to_warehouse = self.target_warehouse
 				for j in self.bom_list:
 					if i.item_code == j.main_item and i.sales_order_ref == j.sales_order_ref:
 						se.bom_no = j.bom
@@ -89,6 +94,8 @@ class MealProcess(Document):
 				se.stock_entry_type = "Manufacture"
 				se.meal_process = self.name
 				se.from_bom = 1
+				se.from_warehouse = self.source_warehouse
+				se.to_warehouse = self.target_warehouse
 				for j in self.bom_list:
 					if i.item_code == j.main_item and i.material_request_ref == j.material_request_ref:
 						se.bom_no = j.bom
@@ -122,6 +129,8 @@ class MealProcess(Document):
 				se.stock_entry_type = "Manufacture"
 				se.meal_process = self.name
 				se.from_bom = 1
+				se.from_warehouse = self.source_warehouse
+				se.to_warehouse = self.target_warehouse
 				for j in self.bom_list:
 					if i.item_code == j.main_item:
 						se.bom_no = j.bom
