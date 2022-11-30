@@ -220,15 +220,32 @@ frappe.ui.form.on('Meal Process', {
 						rate = j.message.price_list_rate;
 						amount = cur_frm.doc.quantity * rate;
 						//console.log(item_name,item_group,uom,rate,amount);
+						let flag = 0;
+						let idx = 0;
+						if(cur_frm.doc.main_items){
+							for(var k=0;k<cur_frm.doc.main_items.length;k++){
+								if(cur_frm.doc.main_items[k].item_code == cur_frm.doc.item ){
+									flag = 1;
+									idx = k;
+								}
+							}
+						}
+						
+						if(flag == 1){
+							cur_frm.doc.main_items[idx].qty = cur_frm.doc.main_items[idx].qty + cur_frm.doc.quantity;
+							cur_frm.doc.main_items[idx].amount = cur_frm.doc.main_items[idx].qty * rate;
+						}
+						else{
+							let item = cur_frm.add_child("main_items");
+							item.item_code = cur_frm.doc.item;
+							item.item_name = item_name;
+							item.item_group = item_group;
+							item.qty = cur_frm.doc.quantity;
+							item.uom = uom;
+							item.rate = rate;
+							item.amount = amount;
 
-						let item = cur_frm.add_child("main_items");
-						item.item_code = cur_frm.doc.item;
-						item.item_name = item_name;
-						item.item_group = item_group;
-						item.qty = cur_frm.doc.quantity;
-						item.uom = uom;
-						item.rate = rate;
-						item.amount = amount;
+						}
 						cur_frm.refresh_field("main_items");
 						cur_frm.set_value("item","");
 						cur_frm.set_value("quantity","");
@@ -239,6 +256,8 @@ frappe.ui.form.on('Meal Process', {
 	},
 	get_bom: function(frm){
 		if(cur_frm.doc.main_items){
+			frm.clear_table("bom_list");
+			frm.clear_table("recipe_items");
 			let items = cur_frm.doc.main_items;
 			for (let i = 0; i < items.length; i++){
 				frappe.db.get_value('BOM', {item: items[i].item_code, is_default: '1'}, ['name','total_cost'])

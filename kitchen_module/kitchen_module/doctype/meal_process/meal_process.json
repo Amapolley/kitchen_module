@@ -39,6 +39,7 @@
   "bom_list",
   "section_break_4",
   "recipe_items",
+  "saved",
   "amended_from"
  ],
  "fields": [
@@ -237,6 +238,12 @@
    "fieldtype": "Select",
    "label": "Series",
    "options": "MP-.YY.-"
+  },
+  {
+   "fieldname": "saved",
+   "fieldtype": "Int",
+   "hidden": 1,
+   "label": "Saved"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -247,7 +254,7 @@
    "link_fieldname": "meal_process"
   }
  ],
- "modified": "2022-09-17 16:29:10.702069",
+ "modified": "2022-11-30 16:18:35.051605",
  "modified_by": "Administrator",
  "module": "Kitchen Module",
  "name": "Meal Process",

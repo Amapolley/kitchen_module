@@ -2,55 +2,60 @@
 # For license information, please see license.txt
 
 import frappe
+from frappe import _, msgprint
 from frappe.model.document import Document
 
 class MealProcess(Document):
 	def before_save(self):
-		if self.get_items_from == "Sales Order":
-			for i in self.main_items:
-				cost = 0
-				for j in self.recipe_items:
-					if i.item_code == j.parent_item and i.seles_order_ref == j.sales_order_ref:
-						if i.qty > 1:
-							j.qty = j.qty * i.qty
-							if j.rate:
-								j.amount = j.qty * j.rate
-								cost = cost + j.amount
-						else:
-							if j.amount:
-								cost = cost + j.amount	
-				i.cost = cost
-				i.profit = i.amount - i.cost
-		elif self.get_items_from == "Material Request":
-			for i in self.main_items:
-				cost = 0
-				for j in self.recipe_items:
-					if i.item_code == j.parent_item and i.material_request_ref == j.material_request_ref:
-						if i.qty > 1:
-							j.qty = j.qty * i.qty
-							if j.rate:
-								j.amount = j.qty * j.rate
-								cost = cost + j.amount
-						else:
-							if j.amount:
-								cost = cost + j.amount	
-				i.cost = cost
-				i.profit = i.amount - i.cost
-		else:
-			for i in self.main_items:
-				cost = 0
-				for j in self.recipe_items:
-					if i.item_code == j.parent_item:
-						if i.qty > 1:
-							j.qty = j.qty * i.qty
-							if j.rate:
-								j.amount = j.qty * j.rate
-								cost = cost + j.amount
-						else:
-							if j.amount:
-								cost = cost + j.amount	
-				i.cost = cost
-				i.profit = i.amount - i.cost
+		if self.saved != 1:
+			if self.get_items_from == "Sales Order":
+				for i in self.main_items:
+					cost = 0
+					for j in self.recipe_items:
+						if i.item_code == j.parent_item and i.seles_order_ref == j.sales_order_ref:
+							if i.qty > 1:
+								j.qty = j.qty * i.qty
+								if j.rate:
+									j.amount = j.qty * j.rate
+									cost = cost + j.amount
+							else:
+								if j.amount:
+									cost = cost + j.amount	
+					i.cost = cost
+					i.profit = i.amount - i.cost
+				self.saved = 1	
+			elif self.get_items_from == "Material Request":
+				for i in self.main_items:
+					cost = 0
+					for j in self.recipe_items:
+						if i.item_code == j.parent_item and i.material_request_ref == j.material_request_ref:
+							if i.qty > 1:
+								j.qty = j.qty * i.qty
+								if j.rate:
+									j.amount = j.qty * j.rate
+									cost = cost + j.amount
+							else:
+								if j.amount:
+									cost = cost + j.amount	
+					i.cost = cost
+					i.profit = i.amount - i.cost
+				self.saved = 1	
+			else:
+				for i in self.main_items:
+					cost = 0
+					for j in self.recipe_items:
+						if i.item_code == j.parent_item:
+							if i.qty > 1:
+								j.qty = j.qty * i.qty
+								if j.rate:
+									j.amount = j.qty * j.rate
+									cost = cost + j.amount
+							else:
+								if j.amount:
+									cost = cost + j.amount	
+					i.cost = cost
+					i.profit = i.amount - i.cost
+				self.saved = 1	
 
 	def before_submit(self):
 		if self.get_items_from == "Sales Order":
@@ -158,6 +163,12 @@ class MealProcess(Document):
 				se.save()
 				se.submit()
 
+	def submit(self):
+		if len(self.main_items) > 5:
+			msgprint(_("The task has been enqueued as a background job. In case there is any issue on processing in background, the system will add a comment about the error on this Meal Process and revert to the Draft stage"))
+			self.queue_action('submit', timeout=3000)
+		else:
+			self._submit()
 
 	# def before_cancel(self):
 	# 	se = frappe.get_doc('Stock Entry', self.stock_entry)
