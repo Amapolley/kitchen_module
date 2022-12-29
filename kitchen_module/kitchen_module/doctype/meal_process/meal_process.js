@@ -107,7 +107,7 @@ frappe.ui.form.on('Meal Process', {
 												let recipe_item = cur_frm.add_child("recipe_items");
 												recipe_item.item_code = b.items[j].item_code;
 												recipe_item.item_name = b.items[j].item_name;
-												recipe_item.qty = b.items[j].qty;
+												recipe_item.bom_qty = b.items[j].qty;
 												recipe_item.uom = b.items[j].uom;
 												frappe.db.get_value("Bin", {"item_code":b.items[j].item_code, "warehouse":cur_frm.doc.source_warehouse}, ["actual_qty","valuation_rate"]).then((r)=>{
 													if(r.message.actual_qty){
@@ -173,7 +173,7 @@ frappe.ui.form.on('Meal Process', {
 												let recipe_item = cur_frm.add_child("recipe_items");
 												recipe_item.item_code = b.items[j].item_code;
 												recipe_item.item_name = b.items[j].item_name;
-												recipe_item.qty = b.items[j].qty;
+												recipe_item.bom_qty = b.items[j].qty;
 												recipe_item.uom = b.items[j].uom;
 												frappe.db.get_value("Bin", {"item_code":b.items[j].item_code, "warehouse":cur_frm.doc.source_warehouse}, ["actual_qty","valuation_rate"]).then((r)=>{
 													if(r.message.actual_qty){
@@ -278,7 +278,7 @@ frappe.ui.form.on('Meal Process', {
 									let recipe_item = cur_frm.add_child("recipe_items");
 									recipe_item.item_code = b.items[j].item_code;
 									recipe_item.item_name = b.items[j].item_name;
-									recipe_item.qty = b.items[j].qty;
+									recipe_item.bom_qty = b.items[j].qty;
 									recipe_item.uom = b.items[j].uom;
 									frappe.db.get_value("Bin", {"item_code":b.items[j].item_code, "warehouse":cur_frm.doc.source_warehouse}, ["actual_qty","valuation_rate"]).then((w)=>{
 										if(w.message.actual_qty){
