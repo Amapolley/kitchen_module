@@ -7,7 +7,6 @@ from frappe.model.document import Document
 
 class MealProcess(Document):
 	def before_save(self):
-		if self.saved != 1:
 			if self.get_items_from == "Sales Order":
 				for i in self.main_items:
 					cost = 0
@@ -23,7 +22,6 @@ class MealProcess(Document):
 									cost = cost + j.amount	
 					i.cost = cost
 					i.profit = i.amount - i.cost
-				self.saved = 1	
 			elif self.get_items_from == "Material Request":
 				for i in self.main_items:
 					cost = 0
@@ -39,7 +37,6 @@ class MealProcess(Document):
 									cost = cost + j.amount	
 					i.cost = cost
 					i.profit = i.amount - i.cost
-				self.saved = 1	
 			else:
 				for i in self.main_items:
 					cost = 0
@@ -55,7 +52,6 @@ class MealProcess(Document):
 									cost = cost + j.amount	
 					i.cost = cost
 					i.profit = i.amount - i.cost
-				self.saved = 1	
 
 	def before_submit(self):
 		if self.get_items_from == "Sales Order":
